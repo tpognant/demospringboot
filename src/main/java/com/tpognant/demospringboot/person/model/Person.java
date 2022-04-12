@@ -2,6 +2,8 @@ package com.tpognant.demospringboot.person.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 public class Person {
 
@@ -32,26 +34,33 @@ public class Person {
     return userId;
   }
 
+  @NotNull
   public String getFirstName() {
     return firstName;
   }
 
+  @NotNull
   public String getLastName() {
     return lastName;
   }
 
+  @NotNull
   public Integer getAge() {
     return age;
   }
 
+  @NotNull
   public Gender getGender() {
     return gender;
   }
 
+  @NotNull
+  @Email
   public String getEmail() {
     return email;
   }
 
+  @NotNull
   public String getFullName() {
     return this.firstName + " " + this.lastName;
   }

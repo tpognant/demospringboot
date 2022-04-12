@@ -5,11 +5,15 @@ import com.tpognant.demospringboot.person.model.Person.Gender;
 import com.tpognant.demospringboot.person.repository.FakePersonDAO;
 import com.tpognant.demospringboot.person.repository.PersonDAO;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import javassist.NotFoundException;
 import javax.swing.text.html.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 public class PersonService {
@@ -21,31 +25,38 @@ public class PersonService {
     this.personDAO = personDAO;
   }
 
-  public List<Person> fetchAllPerson(Optional<Gender> gender) {
-    return personDAO.fetchAllPerson();
-  }
+  public List<Person> fetchAllPerson(Optional<String> gender) {
 
-  public Optional<Person> fetchPerson(UUID userId) {
-    return personDAO.fetchPerson(userId);
-  }
-
-  public Integer updatePerson(Person person) {
-    if (personDAO.fetchPerson(person.getUserId()).isPresent()) {
-      personDAO.updatePerson(person);
-      return 1;
+    if(gender.isEmpty()) {
+      return personDAO.fetchAllPerson();
     }
-    return 0;
+
+    return personDAO.fetchAllPerson().stream()
+        .filter(person -> person.getGender().name().equals(gender.get().toUpperCase()))
+        .collect(Collectors.toList());
   }
 
-  public Integer deletePerson(UUID userUid) {
-    if (personDAO.fetchPerson(userUid).isPresent()) {
-      personDAO.deletePerson(userUid);
-      return 1;
-    }
-    return 0;
+  public Person fetchPerson(UUID userId) throws NotFoundException {
+    return personDAO.fetchPerson(userId)
+        .orElseThrow(() -> new NotFoundException("user " + userId + " not found"));
+  }
+
+  public void updatePerson(Person person) throws NotFoundException {
+    personDAO.fetchPerson(person.getUserId())
+        .orElseThrow(() -> new NotFoundException("User " + person.getUserId() + " not found"));
+
+    personDAO.updatePerson(person);
+  }
+
+  public void deletePerson(UUID userUid) throws NotFoundException {
+    Person person = personDAO.fetchPerson(userUid)
+        .orElseThrow(() -> new NotFoundException("User " + userUid + " not found"));
+
+    personDAO.deletePerson(person.getUserId());
   }
 
   public void insertPerson(Person person) {
-    personDAO.insertPerson(person);
+    personDAO.insertPerson(person.getUserId() == null ? UUID.randomUUID() : person.getUserId(),
+        person);
   }
 }

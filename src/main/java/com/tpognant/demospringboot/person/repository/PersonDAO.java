@@ -11,6 +11,6 @@ public interface PersonDAO {
   Optional<Person> fetchPerson(UUID userId);
   Integer updatePerson(Person person);
   Integer deletePerson(UUID userUid);
-  void insertPerson(Person person);
+  void insertPerson(UUID userUid, Person person);
 
 }

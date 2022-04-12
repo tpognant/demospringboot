@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
+@Repository
 public class FakePersonDAO implements PersonDAO {
 
   Map<UUID, Person> persons;
@@ -18,7 +18,8 @@ public class FakePersonDAO implements PersonDAO {
   public FakePersonDAO() {
     this.persons = new HashMap<>();
 
-    Person thomas = new Person(UUID.randomUUID(), "Thomas", "Pognant", 33, Gender.MALE, "thomaspognant@gmail.com");
+    Person thomas = new Person(UUID.randomUUID(), "Thomas", "Pognant", 33, Gender.MALE,
+        "thomaspognant@gmail.com");
     persons.put(thomas.getUserId(), thomas);
   }
 
@@ -29,12 +30,13 @@ public class FakePersonDAO implements PersonDAO {
 
   @Override
   public Optional<Person> fetchPerson(UUID userId) {
-    return Optional.of(persons.get(userId));
+    Person fetchedPerson = persons.get(userId);
+    return fetchedPerson == null ? Optional.empty() : Optional.of(fetchedPerson);
   }
 
   @Override
   public Integer updatePerson(Person person) {
-    fetchPerson(person.getUserId());
+    persons.put(person.getUserId(), person);
     return 1;
   }
 
@@ -45,7 +47,7 @@ public class FakePersonDAO implements PersonDAO {
   }
 
   @Override
-  public void insertPerson(Person person) {
-    persons.put(person.getUserId() == null ? UUID.randomUUID() : person.getUserId(), person);
+  public void insertPerson(UUID userUid, Person person) {
+    persons.put(userUid, person);
   }
 }
