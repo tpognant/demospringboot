@@ -1,19 +1,15 @@
 package com.tpognant.demospringboot.person.service;
 
 import com.tpognant.demospringboot.person.model.Person;
-import com.tpognant.demospringboot.person.model.Person.Gender;
 import com.tpognant.demospringboot.person.repository.FakePersonDAO;
 import com.tpognant.demospringboot.person.repository.PersonDAO;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javassist.NotFoundException;
-import javax.swing.text.html.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @Service
 public class PersonService {
@@ -36,8 +32,8 @@ public class PersonService {
         .collect(Collectors.toList());
   }
 
-  public Person fetchPerson(UUID userId) throws NotFoundException {
-    return personDAO.fetchPerson(userId)
+  public Person fetchPerson(String userId) throws NotFoundException {
+    return personDAO.fetchPerson(UUID.fromString(userId))
         .orElseThrow(() -> new NotFoundException("user " + userId + " not found"));
   }
 
@@ -48,8 +44,8 @@ public class PersonService {
     personDAO.updatePerson(person);
   }
 
-  public void deletePerson(UUID userUid) throws NotFoundException {
-    Person person = personDAO.fetchPerson(userUid)
+  public void deletePerson(String userUid) throws NotFoundException {
+    Person person = personDAO.fetchPerson(UUID.fromString(userUid))
         .orElseThrow(() -> new NotFoundException("User " + userUid + " not found"));
 
     personDAO.deletePerson(person.getUserId());

@@ -87,7 +87,7 @@ class PersonServiceTest {
 
   @Test
   void shouldFetchPersonNotFound() {
-    assertThatThrownBy(() -> personService.fetchPerson(UUID.randomUUID()))
+    assertThatThrownBy(() -> personService.fetchPerson(UUID.randomUUID().toString()))
         .isInstanceOf(NotFoundException.class);
   }
 
@@ -119,7 +119,7 @@ class PersonServiceTest {
     when(fakePersonDAO.fetchPerson(any(UUID.class))).thenReturn(Optional.of(ninon));
     when(fakePersonDAO.deletePerson(any(UUID.class))).thenReturn(1);
 
-    personService.deletePerson(uuid);
+    personService.deletePerson(uuid.toString());
 
     verify(fakePersonDAO).fetchPerson(uuid);
     verify(fakePersonDAO).deletePerson(uuid);
@@ -127,7 +127,7 @@ class PersonServiceTest {
 
   @Test
   void shouldDeletePersonNotFound() {
-    assertThatThrownBy(() -> personService.deletePerson(UUID.randomUUID()))
+    assertThatThrownBy(() -> personService.deletePerson(UUID.randomUUID().toString()))
         .isInstanceOf(NotFoundException.class);
   }
 

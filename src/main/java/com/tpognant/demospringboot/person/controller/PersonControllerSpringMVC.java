@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Validated
 @RestController
+@RequestMapping("person")
 public class PersonControllerSpringMVC {
 
   private final PersonService personService;
@@ -39,14 +39,13 @@ public class PersonControllerSpringMVC {
       method = RequestMethod.GET,
       path = "{userUid}"
   )
-  public Person fetchPerson(@PathVariable UUID userUid) throws NotFoundException {
+  public Person fetchPerson(@PathVariable String userUid) throws NotFoundException {
     return personService.fetchPerson(userUid);
   }
 
   @RequestMapping(
       method = RequestMethod.PUT
   )
-  @Valid
   public void updatePerson(@RequestBody Person person) throws NotFoundException {
     personService.updatePerson(person);
   }
@@ -55,7 +54,7 @@ public class PersonControllerSpringMVC {
       method = RequestMethod.DELETE,
       path = "{userUid}"
   )
-  public void deletePerson(@PathVariable UUID userUid) throws NotFoundException {
+  public void deletePerson(@PathVariable String userUid) throws NotFoundException {
     personService.deletePerson(userUid);
   }
 
